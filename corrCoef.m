@@ -9,9 +9,13 @@ std1 = mns_1(2);
 std2 = mns_2(2);
 nums = length(vec1);
 sum = 0;
+sum1 = 0;
+sum2 = 0;
 for c = 1:nums
-    sum = sum + (vec1(c)-mean1)*(vec2(c)-mean2);
+    sum = sum + (vec1(c)-mean1).*(vec2(c)-mean2);
+    sum1 = sum1 + (vec1(c) - mean1)^2;
+    sum2 = sum2 + (vec2(c) - mean2)^2;
 end
-r_xy = (sum)/((nums-1)*std1*std2);
+r_xy = (sum)/(sum1*sum2)^0.5; %((nums-1)*std1*std2); 
 return 
 end

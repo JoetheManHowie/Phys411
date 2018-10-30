@@ -40,14 +40,6 @@ time_index_h_15 = find(tt_all >= tt_start_15 & tt_all <= tt_end_15);  %-- indice
 time_hour_15  = tt_all(time_index_h_15);
 temp_hour_15 = station_temp_15(time_index_h_15);
 
-figure(1),clf,land; hold on;  %-- set paper orientation to landscape
-plot(time_hour_15,temp_hour_15,'b-','linewidth',LW);
-xlabel('Time [local]');
-ylabel('Temperature [^oC]');
-title('UVic weather data from 2015/12/1 to 2016/03/1');
-datetick('x');
-fontchan(FS)
-
 % Spring
 station_temp_16 = all_temps(:,station_index); %-- temperature record at station
 tt_start_16 = datenum(2016,6,1,0,0,0);
@@ -56,6 +48,14 @@ time_index_h_16 = find(tt_all >= tt_start_16 & tt_all <= tt_end_16);  %-- indice
 time_hour_16 = tt_all(time_index_h_16);
 temp_hour_16 = station_temp_16(time_index_h_16);
 
+figure(1),clf,land; hold on;  %-- set paper orientation to landscape
+plot(time_hour_15,temp_hour_15,'b-','linewidth',LW);
+xlabel('Time [local]');
+ylabel('Temperature [^oC]');
+title('UVic weather data from 2015/12/1 to 2016/03/1');
+datetick('x');
+fontchan(FS)
+
 figure(2),clf,land; hold on;  %-- set paper orientation to landscape
 plot(time_hour_16,temp_hour_16,'b-','linewidth',LW);
 xlabel('Time [local]');
@@ -63,3 +63,35 @@ ylabel('Temperature [^oC]');
 title('UVic weather data from 2016/06/01 to 2016/09/01');
 datetick('x');
 fontchan(FS)
+
+ 
+% lag times
+len_15 = size(temp_hour_15, 1);
+temp_mean_15 = mean(temp_hour_15);
+
+len_16 = size(temp_hour_16, 1);
+temp_mean_16 = mean(temp_hour_16);
+
+for i = 0:40*24
+    c_xx_15 = 1/(len_15-i)*sum((temp_hour_15(1:end-i)-temp_mean_15).*...
+        (temp_hour_15(i+1:end)-temp_mean_15));
+    
+    c_xx_16 = 1/(len_16-i)*sum((temp_hour_16(1:end-i)-temp_mean_16).*...
+        (temp_hour_16(i+1:end)-temp_mean_16));
+    
+    c_xx(i+1,:) = [i/24 c_xx_15 c_xx_16];
+end
+
+rxx_15 = [c_xx(:,1) c_xx(:,2)./std(temp_hour_15(:))^2];
+rxx_16 = [c_xx(:,1) c_xx(:,3)./std(temp_hour_16(:))^2];
+
+figure(3),clf,land; hold on;  %-- set paper orientation to landscape
+plot(rxx_15(:,1),rxx_15(:,2),'b-','linewidth',LW);
+plot(rxx_16(:,1),rxx_16(:,2),'r-','linewidth',LW);
+plot(xlim,ones(1,2)./exp(1),'--k')
+xlabel('Time [local]');
+ylabel('Lag Corr Coef');
+title('Lag Time series');
+legend('Winter Lag', 'Summer Lag', 'e^{-1} Line')
+fontchan(FS)
+
