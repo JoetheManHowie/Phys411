@@ -53,7 +53,7 @@ t2 = [0:pi/200:100*pi];
 NFFT1 = size(t2,2);
 
 terms = [5 100];
-tit = {'Power Spectrum with 5 terms' 'Power Spectrum with 100 terms'}
+tit = {'Power Spectrum with 5 terms' 'Power Spectrum with 100 terms'};
 
 time_2 = [0:T/200:100*T];
 FT_x = zeros(1,length(time_2));
